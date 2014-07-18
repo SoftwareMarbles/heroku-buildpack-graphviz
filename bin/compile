@@ -27,15 +27,15 @@ mkdir -p $CACHE_DIR/graphviz
 
 GRAPHVIZ_VERSION="2.28.0"
 
-if [ -f $CACHE_DIR/graphviz/version; ] then
-  CACHED_VERSION =`cat $CACHE_DIR/graphviz/version`
+if [ -r $CACHE_DIR/graphviz/version ]; then
+  CACHED_VERSION = `cat $CACHE_DIR/graphviz/version`
 else
-  CACHED_VERSION =''
+  CACHED_VERSION = ''
 fi
 
 export PATH=/sbin:/usr/sbin:$PATH:
 
-if [ CACHED_VERSION == GRAPHVIZ_VERSION ] then
+if [ CACHED_VERSION == GRAPHVIZ_VERSION ]; then
   echo "-----> Detected cached version" $CACHED_VERSION "is valid. Skipping building."
 else
   echo "-----> Fetching graphviz"
