@@ -35,8 +35,8 @@ fi
 
 export PATH=/sbin:/usr/sbin:$PATH:
 
-if [ $CACHED_VERSION == $GRAPHVIZ_VERSION ]; then
-  echo "-----> Detected cached version" $CACHED_VERSION "is valid. Skipping building."
+if [ "$CACHED_VERSION" == "$GRAPHVIZ_VERSION" ]; then
+  echo "-----> Detected cached version $CACHED_VERSION is valid. Skipping building."
 else
   echo "-----> Fetching graphviz"
   cd $WGET_BUILD
