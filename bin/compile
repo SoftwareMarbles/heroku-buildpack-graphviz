@@ -41,9 +41,10 @@ export PATH=/sbin:/usr/sbin:$PATH:
 if [ "$GRAPHVIZ_CACHED_SOURCE_URL_VERSION" == "$GRAPHVIZ_SOURCE_URL" ]; then
   echo "-----> Detected already built version (source URL $GRAPHVIZ_SOURCE_URL). Skipping build."
 else
-  echo "-----> Fetching graphviz"
+  echo "-----> Fetching graphviz from $GRAPHVIZ_SOURCE_URL"
   cd $WGET_BUILD
   curl -O $GRAPHVIZ_SOURCE_URL >/dev/null 2>&1
+  echo "-----> Decompressing $GRAPHVIZ_SOURCE_FILE"
   tar zxvf $GRAPHVIZ_SOURCE_FILE graphviz-source >/dev/null 2>&1
   cd graphviz-source
   echo "-----> Configuring graphviz"
