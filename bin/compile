@@ -23,21 +23,37 @@ CACHE_DIR=$2
 
 GRAPHVIZ_BUILD="$(mktmpdir graphviz)"
 
-mkdir -p $CACHE_DIR/.tools/graphviz
+GRAPHVIZ_SOURCE_FILE="graphviz-2.28.0.tar.gz"
+GRAPHVIZ_SOURCE_URL="http://www.graphviz.org/pub/graphviz/stable/SOURCES/$GRAPHVIZ_SOURCE_FILE"
+GRAPHVIZ_DEPLOYMENT_DIR="$CACHE_DIR/.tools/graphviz"
+GRAPHVIZ_SOURCE_URL_VERSION_FILE="$GRAPHVIZ_DEPLOYMENT_DIR/version"
+
+mkdir -p $GRAPHVIZ_DEPLOYMENT_DIR
+
+if [ -f $GRAPHVIZ_SOURCE_URL_VERSION_FILE ]; then
+  GRAPHVIZ_CACHED_SOURCE_URL_VERSION=`cat $GRAPHVIZ_SOURCE_URL_VERSION_FILE`
+else
+  GRAPHVIZ_CACHED_SOURCE_URL_VERSION=''
+fi
 
 export PATH=/sbin:/usr/sbin:$PATH:
 
-echo "-----> Fetching graphviz"
-cd $WGET_BUILD
-curl -O http://www.graphviz.org/pub/graphviz/stable/SOURCES/graphviz-2.28.0.tar.gz >/dev/null 2>&1
-tar zxvf graphviz-2.28.0.tar.gz >/dev/null 2>&1
-cd graphviz-2.28.0
-echo "-----> Configuring graphviz"
-./configure --prefix=$CACHE_DIR/.tools/graphviz >/dev/null 2>&1
-echo "-----> Compiling graphviz"
-make -j5 >/dev/null 2>&1
-echo "-----> Installing graphviz"
-make install >/dev/null 2>&1
-echo "grapvhiz installed" | indent
+if [ "$GRAPHVIZ_CACHED_SOURCE_URL_VERSION" == "$GRAPHVIZ_SOURCE_URL" ]; then
+  echo "-----> Detected already built version (source URL $GRAPHVIZ_SOURCE_URL). Skipping build."
+else
+  echo "-----> Fetching graphviz"
+  cd $WGET_BUILD
+  curl -O $GRAPHVIZ_SOURCE_URL >/dev/null 2>&1
+  tar zxvf $GRAPHVIZ_SOURCE_FILE graphviz-source >/dev/null 2>&1
+  cd graphviz-source
+  echo "-----> Configuring graphviz"
+  ./configure --prefix=GRAPHVIZ_DEPLOYMENT_DIR >/dev/null 2>&1
+  echo "-----> Compiling graphviz"
+  make -j5 >/dev/null 2>&1
+  echo "-----> Installing graphviz"
+  make install >/dev/null 2>&1
+  echo "grapvhiz installed" | indent
+  echo $GRAPHVIZ_SOURCE_URL > $GRAPHVIZ_SOURCE_URL_VERSION_FILE
+fi
 
 exit 0
