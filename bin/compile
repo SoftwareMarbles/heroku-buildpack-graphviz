@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bin/compile <build-dir> <cache-dir>
+# bin/compile <build-dir> <cache-dir> <env-dir>
 set -e
 
 mktmpdir() {
@@ -9,26 +9,40 @@ mktmpdir() {
   echo $dir
 }
 
-function indent() {
-  c='s/^/       /'
-  case $(uname) in
-    Darwin) sed -l "$c";;
-    *)      sed -u "$c";;
-  esac
-}
-
 BUILDPACK_DIR=`cd $(dirname $0); cd ..; pwd`
+
+# convenience functions
+source $BUILDPACK_DIR/bin/common.sh
+
 BUILD_DIR=$1
 CACHE_DIR=$2
+ENV_DIR=${3:-}
+
+export_env_dir "$ENV_DIR" '^[A-Z_][A-Z0-9_]*$' '^(HOME|PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH|LD_LIBRARY_PATH|STACK)$'
 
 GRAPHVIZ_BUILD="$(mktmpdir graphviz)"
 
-GRAPHVIZ_SOURCE_FILE="graphviz-2.28.0.tar.gz"
-GRAPHVIZ_SOURCE_URL="http://www.graphviz.org/pub/graphviz/stable/SOURCES/$GRAPHVIZ_SOURCE_FILE"
+cd $BUILD_DIR
+# Create target directory for graphviz
+mkdir -p .heroku/graphviz
+
+HEROKU_TARGET_DIR=/app/.heroku
+# Create symbolic link in app directory for convenience
+ln -sf $BUILD_DIR/.heroku $HEROKU_TARGET_DIR
+
+export PATH=$HEROKU_TARGET_DIR/graphviz/bin:$PATH
+export LD_LIBRARY_PATH=$HEROKU_TARGET_DIR/graphviz/lib:$LD_LIBRARY_PATH
+
+GRAPHVIZ_SOURCE_FILE="graphviz-2.38.0.tar.gz"
+# GraphViz website is down
+# GRAPHVIZ_SOURCE_URL="http://www.graphviz.org/pub/graphviz/stable/SOURCES/$GRAPHVIZ_SOURCE_FILE"
+echo "-----> GraphViz website is down. Use alternative..."
+GRAPHVIZ_SOURCE_URL="http://fossies.org/linux/misc/$GRAPHVIZ_SOURCE_FILE"
 GRAPHVIZ_DEPLOYMENT_DIR="$CACHE_DIR/.tools/graphviz"
 GRAPHVIZ_SOURCE_URL_VERSION_FILE="$GRAPHVIZ_DEPLOYMENT_DIR/version"
 GRAPHVIZ_SOURCE_DIR="graphviz-source"
 
+echo "-----> Create GraphViz deployment dir $GRAPHVIZ_DEPLOYMENT_DIR"
 mkdir -p $GRAPHVIZ_DEPLOYMENT_DIR
 
 if [ -f $GRAPHVIZ_SOURCE_URL_VERSION_FILE ]; then
@@ -36,8 +50,6 @@ if [ -f $GRAPHVIZ_SOURCE_URL_VERSION_FILE ]; then
 else
   GRAPHVIZ_CACHED_SOURCE_URL_VERSION=''
 fi
-
-export PATH=/sbin:/usr/sbin:$PATH:
 
 if [ "$GRAPHVIZ_CACHED_SOURCE_URL_VERSION" == "$GRAPHVIZ_SOURCE_URL" ]; then
   echo "-----> Detected already built version (source URL $GRAPHVIZ_SOURCE_URL). Skipping build."
@@ -49,12 +61,15 @@ else
   mkdir -p "$GRAPHVIZ_SOURCE_DIR"
   tar zxvf $GRAPHVIZ_SOURCE_FILE --strip-components 1 -C "$GRAPHVIZ_SOURCE_DIR" >/dev/null 2>&1
   cd graphviz-source
-  echo "-----> Configuring graphviz"
-  ./configure --prefix=$GRAPHVIZ_DEPLOYMENT_DIR >/dev/null 2>&1
-  echo "-----> Compiling graphviz"
+  echo "-----> Configuring graphviz (can take a while)"
+  ./configure --prefix=$GRAPHVIZ_DEPLOYMENT_DIR --disable-perl >/dev/null 2>&1
+  echo "-----> Compiling graphviz (can take a while)"
   make -j5 >/dev/null 2>&1
   echo "-----> Installing graphviz"
   make install >/dev/null 2>&1
+  echo "-----> Copying to $HEROKU_TARGET_DIR"
+  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/bin $HEROKU_TARGET_DIR/graphviz
+  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/lib $HEROKU_TARGET_DIR/graphviz
   echo "grapvhiz installed" | indent
   rm -rdf "$GRAPHVIZ_SOURCE_DIR"
   echo $GRAPHVIZ_SOURCE_URL > $GRAPHVIZ_SOURCE_URL_VERSION_FILE
