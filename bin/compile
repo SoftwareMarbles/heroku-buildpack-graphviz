@@ -31,8 +31,8 @@ HEROKU_TARGET_DIR=/app/.heroku
 # Create symbolic link in app directory for convenience
 ln -sf $BUILD_DIR/.heroku $HEROKU_TARGET_DIR
 
-export PATH=$HEROKU_TARGET_DIR/bin:$PATH
-export LD_LIBRARY_PATH=$HEROKU_TARGET_DIR/lib:$LD_LIBRARY_PATH
+export PATH=$HEROKU_TARGET_DIR/graphviz/bin:$PATH
+export LD_LIBRARY_PATH=$HEROKU_TARGET_DIR/graphviz/lib:$LD_LIBRARY_PATH
 
 GRAPHVIZ_SOURCE_FILE="graphviz-2.38.0.tar.gz"
 # GraphViz website is down
