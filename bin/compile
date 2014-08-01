@@ -23,13 +23,16 @@ CACHE_DIR=$2
 
 GRAPHVIZ_BUILD="$(mktmpdir graphviz)"
 
+cd $BUILD_DIR
 # Create target directory for graphviz
-TARGET_DIR=/app/.graphviz
-mkdir -p $TARGET_DIR
+mkdir -p .heroku/graphviz
 
-# Create symbolic link in vendor directory for convenience
-mkdir -p $BUILD_DIR/vendor/
-ln -s $BUILD_DIR/vendor/graphviz $TARGET_DIR
+HEROKU_TARGET_DIR=/app/.heroku
+# Create symbolic link in app directory for convenience
+ln -sf $BUILD_DIR/.heroku $HEROKU_TARGET_DIR
+
+export PATH=$HEROKU_TARGET_DIR/bin:$PATH
+export LD_LIBRARY_PATH=$HEROKU_TARGET_DIR/lib:$LD_LIBRARY_PATH
 
 GRAPHVIZ_SOURCE_FILE="graphviz-2.38.0.tar.gz"
 # GraphViz website is down
@@ -49,9 +52,6 @@ else
   GRAPHVIZ_CACHED_SOURCE_URL_VERSION=''
 fi
 
-export PATH=$TARGET_DIR/bin:$PATH
-export LD_LIBRARY_PATH=$TARGET_DIR/lib:$LD_LIBRARY_PATH
-
 if [ "$GRAPHVIZ_CACHED_SOURCE_URL_VERSION" == "$GRAPHVIZ_SOURCE_URL" ]; then
   echo "-----> Detected already built version (source URL $GRAPHVIZ_SOURCE_URL). Skipping build."
 else
@@ -68,10 +68,11 @@ else
   make -j5
   echo "-----> Installing graphviz"
   make install
+  echo "-----> Copying to $HEROKU_TARGET_DIR"
+  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/bin $HEROKU_TARGET_DIR
+  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/lib $HEROKU_TARGET_DIR
   echo "grapvhiz installed" | indent
   rm -rdf "$GRAPHVIZ_SOURCE_DIR"
-  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/bin $TARGET_DIR
-  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/lib $TARGET_DIR
   echo $GRAPHVIZ_SOURCE_URL > $GRAPHVIZ_SOURCE_URL_VERSION_FILE
 fi
 
