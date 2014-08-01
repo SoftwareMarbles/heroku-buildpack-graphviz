@@ -23,7 +23,7 @@ CACHE_DIR=$2
 
 GRAPHVIZ_BUILD="$(mktmpdir graphviz)"
 
-GRAPHVIZ_SOURCE_FILE="graphviz-2.28.0.tar.gz"
+GRAPHVIZ_SOURCE_FILE="graphviz-2.38.0.tar.gz"
 GRAPHVIZ_SOURCE_URL="http://www.graphviz.org/pub/graphviz/stable/SOURCES/$GRAPHVIZ_SOURCE_FILE"
 GRAPHVIZ_DEPLOYMENT_DIR="$CACHE_DIR/.tools/graphviz"
 GRAPHVIZ_SOURCE_URL_VERSION_FILE="$GRAPHVIZ_DEPLOYMENT_DIR/version"
