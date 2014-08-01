@@ -54,11 +54,11 @@ else
   tar zxvf $GRAPHVIZ_SOURCE_FILE --strip-components 1 -C "$GRAPHVIZ_SOURCE_DIR" >/dev/null 2>&1
   cd graphviz-source
   echo "-----> Configuring graphviz"
-  ./configure --prefix=$GRAPHVIZ_DEPLOYMENT_DIR --disable-perl >/dev/null 2>&1
+  ./configure --prefix=$GRAPHVIZ_DEPLOYMENT_DIR --disable-perl
   echo "-----> Compiling graphviz"
-  make -j5 >/dev/null 2>&1
+  make -j5
   echo "-----> Installing graphviz"
-  make install >/dev/null 2>&1
+  make install
   echo "grapvhiz installed" | indent
   rm -rdf "$GRAPHVIZ_SOURCE_DIR"
   echo $GRAPHVIZ_SOURCE_URL > $GRAPHVIZ_SOURCE_URL_VERSION_FILE
