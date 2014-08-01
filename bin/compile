@@ -24,7 +24,10 @@ CACHE_DIR=$2
 GRAPHVIZ_BUILD="$(mktmpdir graphviz)"
 
 GRAPHVIZ_SOURCE_FILE="graphviz-2.38.0.tar.gz"
-GRAPHVIZ_SOURCE_URL="http://www.graphviz.org/pub/graphviz/stable/SOURCES/$GRAPHVIZ_SOURCE_FILE"
+# GraphViz website is down
+# GRAPHVIZ_SOURCE_URL="http://www.graphviz.org/pub/graphviz/stable/SOURCES/$GRAPHVIZ_SOURCE_FILE"
+echo "-----> GraphViz website is down. Use alternative..."
+GRAPHVIZ_SOURCE_URL="http://fossies.org/linux/misc/$GRAPHVIZ_SOURCE_FILE"
 GRAPHVIZ_DEPLOYMENT_DIR="$CACHE_DIR/.tools/graphviz"
 GRAPHVIZ_SOURCE_URL_VERSION_FILE="$GRAPHVIZ_DEPLOYMENT_DIR/version"
 GRAPHVIZ_SOURCE_DIR="graphviz-source"
