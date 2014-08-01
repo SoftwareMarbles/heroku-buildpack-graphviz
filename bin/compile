@@ -62,12 +62,12 @@ else
   mkdir -p "$GRAPHVIZ_SOURCE_DIR"
   tar zxvf $GRAPHVIZ_SOURCE_FILE --strip-components 1 -C "$GRAPHVIZ_SOURCE_DIR" >/dev/null 2>&1
   cd graphviz-source
-  echo "-----> Configuring graphviz"
-  ./configure --prefix=$GRAPHVIZ_DEPLOYMENT_DIR --disable-perl
-  echo "-----> Compiling graphviz"
-  make -j5
+  echo "-----> Configuring graphviz (can take a while)"
+  ./configure --prefix=$GRAPHVIZ_DEPLOYMENT_DIR --disable-perl >/dev/null 2>&1
+  echo "-----> Compiling graphviz (can take a while)"
+  make -j5 >/dev/null 2>&1
   echo "-----> Installing graphviz"
-  make install
+  make install >/dev/null 2>&1
   echo "-----> Copying to $HEROKU_TARGET_DIR"
   cp -r $GRAPHVIZ_DEPLOYMENT_DIR/bin $HEROKU_TARGET_DIR/graphviz
   cp -r $GRAPHVIZ_DEPLOYMENT_DIR/lib $HEROKU_TARGET_DIR/graphviz
