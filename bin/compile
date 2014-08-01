@@ -28,8 +28,8 @@ TARGET_DIR=/app/.graphviz
 mkdir -p $TARGET_DIR
 
 # Create symbolic link in vendor directory for convenience
-mkdir -p $BUID_DIR/vendor/
-ln -s $BUID_DIR/vendor/graphviz $TARGET_DIR
+mkdir -p $BUILD_DIR/vendor/
+ln -s $BUILD_DIR/vendor/graphviz $TARGET_DIR
 
 GRAPHVIZ_SOURCE_FILE="graphviz-2.38.0.tar.gz"
 # GraphViz website is down
