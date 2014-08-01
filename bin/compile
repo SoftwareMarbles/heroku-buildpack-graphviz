@@ -23,6 +23,14 @@ CACHE_DIR=$2
 
 GRAPHVIZ_BUILD="$(mktmpdir graphviz)"
 
+# Create target directory for graphviz
+TARGET_DIR=/app/.graphviz
+mkdir -p $TARGET_DIR
+
+# Create symbolic link in vendor directory for convenience
+mkdir -p $BUID_DIR/vendor/
+ln -s $BUID_DIR/vendor/graphviz $TARGET_DIR
+
 GRAPHVIZ_SOURCE_FILE="graphviz-2.38.0.tar.gz"
 # GraphViz website is down
 # GRAPHVIZ_SOURCE_URL="http://www.graphviz.org/pub/graphviz/stable/SOURCES/$GRAPHVIZ_SOURCE_FILE"
@@ -41,7 +49,8 @@ else
   GRAPHVIZ_CACHED_SOURCE_URL_VERSION=''
 fi
 
-export PATH=/sbin:/usr/sbin:$PATH:
+export PATH=$TARGET_DIR/bin:$PATH
+export LD_LIBRARY_PATH=$TARGET_DIR/lib:$LD_LIBRARY_PATH
 
 if [ "$GRAPHVIZ_CACHED_SOURCE_URL_VERSION" == "$GRAPHVIZ_SOURCE_URL" ]; then
   echo "-----> Detected already built version (source URL $GRAPHVIZ_SOURCE_URL). Skipping build."
@@ -61,6 +70,8 @@ else
   make install
   echo "grapvhiz installed" | indent
   rm -rdf "$GRAPHVIZ_SOURCE_DIR"
+  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/bin $TARGET_DIR
+  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/lib $TARGET_DIR
   echo $GRAPHVIZ_SOURCE_URL > $GRAPHVIZ_SOURCE_URL_VERSION_FILE
 fi
 
