@@ -69,8 +69,8 @@ else
   echo "-----> Installing graphviz"
   make install
   echo "-----> Copying to $HEROKU_TARGET_DIR"
-  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/bin $HEROKU_TARGET_DIR
-  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/lib $HEROKU_TARGET_DIR
+  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/bin $HEROKU_TARGET_DIR/graphviz
+  cp -r $GRAPHVIZ_DEPLOYMENT_DIR/lib $HEROKU_TARGET_DIR/graphviz
   echo "grapvhiz installed" | indent
   rm -rdf "$GRAPHVIZ_SOURCE_DIR"
   echo $GRAPHVIZ_SOURCE_URL > $GRAPHVIZ_SOURCE_URL_VERSION_FILE
